@@ -2,7 +2,7 @@
   "name": "template-for-generator-templates",
   "version": "0.0.1",
   "description": "Template for generator templates to make it much easier to start writing your own generator template",
-  "main": "index.js",
+  "main": "client.js",
   "scripts": {
     "test": "npm run testTemplate && npm run testHooks && npm run testFilters && npm run testComponents",
     "testTemplate": "rimraf test/temp && jest --coverage -t 'templateGenerationResult'",
@@ -81,7 +81,11 @@
       "maxTextSize": {
         "description": "It is possible that in case of an extremely large AsyncAPI document default mermaid recommended text size will not be enough. Then you need to explicitly make it larger",
         "default": 50000
-      }
+      },
+      "server": {
+        "description": "The data streaming server name",
+        "required": true
+      }	
     },
     "nonRenderableFiles": [
       "style.css",
