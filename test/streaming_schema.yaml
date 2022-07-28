@@ -1,0 +1,96 @@
+asyncapi: '2.2.0'
+info:
+  title: Data Streaming API
+  version: '1.0.0'
+  description: |
+    allows clients to subscribe to a data streaming API
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+servers:
+  phoenix91727:
+    url: admin:Welcome_1@phoenix91727.dev3sub2phx.databasede3phx.oraclevcn.com:9002
+    protocol: ws
+
+defaultContentType: application/json
+
+channels:
+  /services/v2/stream/mystream1:
+    bindings:
+      ws:
+        bindingVersion: 0.1.0
+        query:
+          type: object
+          description: query parameter like begin=earliest
+          properties:
+            begin:
+              type: string
+              default: earliest
+              description: begin position to start streaming data
+    subscribe:
+      summary: data records
+      operationId: onRecords
+      message:
+        $ref : '#/components/messages/userRecords'
+
+components:
+  messages:
+    userRecords:
+      name: userRecords
+      title: User Data Records
+      summary: array of user data records in json format
+      contentType: application/json
+      payload:
+        type: array
+        items:
+          $ref : '#/components/schemas/record'
+
+  schemas:
+    dmlRecord:
+      type: object
+      properties:
+        qual_table:
+          description: qualified table object name
+          type: string
+        op_type:
+          type: string
+          description: operation type in string format  
+          enum:
+            - INSERT
+            - UPDATE
+            - DELETE
+        op_ts:
+          description: operation timestamp
+          type: string
+        xid:
+          description: Id of the transaction where the record belongs to
+          type: string
+        before:
+          description: record before image, a collection of key-value pairs representing the column names and original column values. Applicable for update and delete operations.
+          type: object
+        after:
+          description: record after image, a collection of key-value pairs representing the column names and new column values. Applicable for insert and update operations.
+          type: object 
+
+    ddlRecord:
+      type: object      
+      properties:
+        op_type:
+          type: string
+          description: operation type indicating a DDL change record
+          enum:
+            - DDL
+
+    metadataRecord:
+      type: object    
+      properties:
+
+        qual_table:
+          description: qualified table object name
+          type: string
+
+    record:
+      oneOf:
+        - $ref: "#/components/schemas/dmlRecord"
+        - $ref: "#/components/schemas/ddlRecord"
+        - $ref: "#/components/schemas/metadataRecord"
