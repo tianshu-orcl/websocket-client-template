@@ -3,13 +3,13 @@ info:
   title: data streaming API
   version: '1.0.0'
   description: |
-    allows clients to subscribe to a data streaming API
+    allow clients to subscribe to data in a websocket streaming channel 
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
 servers:
   localhost:
-    url: admin:Welcome_1@localhost:9002
+    url: admin:admin@localhost:9002
     protocol: ws
 
 defaultContentType: application/json
@@ -18,7 +18,7 @@ channels:
   /services/v2/stream/stream1:
     bindings:
       ws:
-        bindingVersion: 0.1.0
+        bindingVersion: 1.0.0
         query:
           type: object
           description: query parameter like begin=earliest
@@ -44,5 +44,3 @@ components:
         type: array
         items:
           type: object
-
-
