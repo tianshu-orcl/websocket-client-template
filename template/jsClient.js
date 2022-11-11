@@ -17,6 +17,111 @@ function getDataProcessingBlock (msgType) {
   }
 }
 
+function getUserInputBlock (isSecure, isBasicAuth) {
+  if (isSecure) {
+    if (isBasicAuth) {
+      throw new Error('basic authentication is not supported for wss protocol');
+    }
+    return ` 
+    //Note: The following commands can be used to extract key/cert from your wallet.
+    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12  -nokeys  -out <file_name>.crt -nodes  
+    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12  -nocerts -out <file_name>.rsa -nodes
+    let userCert = reader.question("Enter location of the certificate(.crt): ");
+    let userKey  = reader.question("Enter location of the key(.rsa): ");
+    `;
+  }
+  else {
+    if (isBasicAuth) {
+      return `       
+      `;
+    }
+    else {
+      return ` 
+    let username = reader.question("Enter the username for accessing the service: ");
+    let password = reader.question("Enter the password for accessing the service: ",{ hideEchoBack: true });
+    if (!username || !password) {
+      throw new Error("username and password can not be empty");
+    }
+      `;
+    }
+  }
+}
+
+function getQueryParamBlock(queryMap) {
+  let mapSize = queryMap.length;  
+  let s1 ='const queryParams = new Map([';
+  queryMap.forEach(function(value, key) {
+    s1 += '[\''+key+'\',\''+value+'\']';
+    mapSize--;
+    if (mapSize) {
+      s1+= ','
+    }
+  })
+  s1+=']);';
+    
+  return s1+`\n
+    const queryParamSign    = "?";
+    const queryParamDelimit = "&";
+    let queryParamSignAdded = false;
+    let size                = queryParams.length;
+
+    for (const [key, value] of queryParams) {
+      let paramValue = reader.question("Enter the value for query parameter \"+key+\"(default=\"+value+\"):") || value;
+
+      if (!queryParamSignAdded) {
+        serviceURL += queryParamSign;
+        queryParamSignAdded = true;
+      }
+      serviceURL += key + "=" + paramValue;
+      size--;
+      if (size) {
+        serviceURL += queryParamDelimit;
+      }
+    }
+  `;
+}
+
+function getServiceUrlBlock (isSecure,isBasicAuth,urlProtocol,urlServer,urlPath) {
+  if (isSecure) {
+    return ` 
+    let serviceURL = '`+urlProtocol+`://`+urlServer+urlPath+`';
+    `
+    ;
+  }
+  else {
+    if (isBasicAuth) {	  
+      return ` 
+    let serviceURL = '`+urlProtocol+`://`+urlServer+urlPath+`';
+      `;
+    }
+    else {
+      return `
+    let serviceURL = '`+urlProtocol+`://'+username+':'+password+'@`+urlServer+urlPath+`';
+    `;
+    }
+  }
+}
+
+function getWebSocketConnectionBlock (isSecure) {
+  if (isSecure) {
+    return ` 
+    // establishing secure websocket connection to the service
+    const options = {
+      key: fs.readFileSync(userKey),
+      cert: fs.readFileSync(userCert),
+      ca: fs.readFileSync(userCert)
+     };
+    const wsClient = new WebSocket(serviceURL,options);
+    `;
+  }
+  else {
+    return ` 
+    // establishing websocket connection to the service
+    const wsClient = new WebSocket(serviceURL);
+    `;
+  }
+}
+
 export default function({ asyncapi, params }) {
   if (!asyncapi.hasComponents()) {
     return null;
@@ -35,7 +140,18 @@ export default function({ asyncapi, params }) {
   let urlPath             = "";
   let urlQueryString      = "";
   let msgType             = "";
- 
+  let isSecure            = false;
+  let isBasicAuth         = false;
+  let queryMap            = new Map();
+    
+  if (urlProtocol == "wss") {
+    isSecure = true;
+  }
+    
+  if (urlServer.includes("@")) {
+    isBasicAuth = true;
+  }
+	
   if (channelIterator.length !== 1) {
     throw new Error('only one channel allowed per streaming endpoint');
   }
@@ -54,26 +170,24 @@ export default function({ asyncapi, params }) {
       let ws_binding = channel.binding("ws");
       let queryParamSignAdded = false;	
       const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
-      let bindingPropSize = bindingPropIterator.length;	
 
       for (const [propKey, propValue] of bindingPropIterator) {
         let sValue = propValue["default"];
-	if (sValue) {
-          if (!queryParamSignAdded) {
-            urlQueryString += queryParamSign;
-            queryParamSignAdded = true;
-	  }
-	    urlQueryString += propKey + "=" + sValue;
-            bindingPropSize--;
-            if (bindingPropSize !== 0) {
-		urlQueryString += queryParamDelimit;
-	    }  
-	}
+        if (sValue) {
+          queryMap.set(propKey, sValue);      
+        }
+        else {
+          queryMap.set(propKey, '');      
+        }
       }
     }
   }
 
   let dataProcessBlock = getDataProcessingBlock(msgType);
+  let userInputBlock = getUserInputBlock(isSecure,isBasicAuth);
+  let serviceUrlBlock = getServiceUrlBlock(isSecure,isBasicAuth,urlProtocol,urlServer,urlPath);
+  let queryParamBlock = getQueryParamBlock(queryMap); 
+  let websocketConnectionBlock = getWebSocketConnectionBlock(isSecure);
   
   return (
     <File name="client.js">
@@ -85,6 +199,8 @@ export default function({ asyncapi, params }) {
 // ${urlPath}
 //////////////////////////////////////////////////////////////////////
 const WebSocket = require('ws')
+const reader = require('readline-sync');
+const fs = require('fs');
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -125,16 +241,23 @@ const ${userFunction} = (wsClient) => {
 ////////////////////////////////////////////////////////////////
 
 const init = async () =>{
-    const serviceURL = '${urlProtocol}://${urlServer}${urlPath}${urlQueryString}'
-
+`+
+ userInputBlock
+ +
+ serviceUrlBlock
+ +
+ queryParamBlock
+ +
+      `
     console.log(" ");
     console.log("Establishing websocket connection to: ");
-    console.log(serviceURL);
+    // uncomment below for debugging
+    console.log(serviceURL); 
     console.log(" ");
-
-    // establishing websocket connection to the service
-    const wsClient = new WebSocket(serviceURL);
-
+`+
+ websocketConnectionBlock
+ +
+      `
     console.log(" ");
     console.log("Start streaming data from the service ...");
     console.log(" ");

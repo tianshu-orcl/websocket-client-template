@@ -37,7 +37,8 @@
     "@asyncapi/generator-filters": "^2.1.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "@asyncapi/generator-react-sdk": "^0.2.23",
-    "puppeteer": "^5.2.1"
+    "puppeteer": "^5.2.1",
+    "readline-sync": "^1.4.10"
   },
   "release": {
     "branches": [
@@ -85,7 +86,7 @@
       "server": {
         "description": "The data streaming server name",
         "required": true
-      }	
+      }
     },
     "nonRenderableFiles": [
       "style.css",
