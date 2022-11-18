@@ -2,10 +2,9 @@
   "name": "websocket-streaming-template",
   "version": "0.0.1",
   "description": "Template for generating client code for a websocket streaming service",
-  "main": "client.js",
+  "main": "jsClient.js",
   "scripts": {
-    "test": "npm run testTemplate && npm run testHooks && npm run testFilters && npm run testComponents",
-    "testTemplate": "rimraf test/temp && jest --coverage -t 'templateGenerationResult'",
+    "test": "jest --coverage",	  
     "release": "echo 'We do not trigger releases for this template. Normally this script should invoke \"semantic-release\"'",
     "lint": "eslint --max-warnings 0 --fix --config .eslintrc .",
     "generate:readme:toc": "markdown-toc -i README.md",
@@ -104,7 +103,7 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-sonarjs": "^0.5.0",
-    "jest": "^27.2.5",
+    "jest": "^27.5.1",
     "markdown-toc": "^1.2.0",
     "rimraf": "^3.0.2",
     "semantic-release": "^17.1.1"
