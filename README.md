@@ -17,10 +17,8 @@
 - [Specification requirements](#specification-requirements)
 - [Supported protocols](#supported-protocols)
 - [How to use the template](#how-to-use-the-template)
-  * [Interactive Server Client](#interactive-server-client)
   * [Data Streaming Client](#data-streaming-client)
 - [Template configuration](#template-configuration)
-- [Custom hooks that you can disable](#custom-hooks-that-you-can-disable)
 - [Development](#development)
 - [Contributors](#contributors)
 
@@ -59,52 +57,9 @@ Property name | Reason | Fallback | Default
 
 This template must be used with the AsyncAPI Generator. You can find all available options [here](https://github.com/asyncapi/generator/).
 
-### Interactive Server Client
-
-```bash
-# Install the AsyncAPI Generator
-npm install -g @asyncapi/generator
-
-# Run generation
-ag https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml @asyncapi/nodejs-ws-template -o output -p server=localhost
-
-##
-## Start the server 
-##
-
-# Go to the generated server
-cd output
-
-# Build generated application
-npm i
-
-# Start server
-npm start
-
-##
-## Start the client 
-##
-
-# From another terminal tab open generated HTML in browser
-open output/index.html
-
-# Open developers console and follow instructions from there
-# Connect with server
-listen('/echo')
-
-# Send example message
-send({ greet: 'Hello from client' })
-
-# You should see the sent message in the logs of the previously started server
-```
-
 ### Data Streaming Client
 
-In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, modify the test/streaming.yaml accordingly:
-  * specify the service host url
-  * specify the channel and bindings associated with the channel
-  * specify the message subscribed
-
+In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, run the asyncapi generator against a websocket streaming API specification such as test/streaming.yaml:
 
 ```bash
 # Install dependecies and the AsyncAPI Generator
@@ -112,7 +67,9 @@ npm install
 npm install -g @asyncapi/generator
 
 # Run generation
-ag test/streaming.yaml @asyncapi/nodejs-ws-template -o output -p server=localhost
+ag test/streaming.yaml . -o output -p server=localhost
+or
+ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p server=localhost
 
 ##
 ## Start the client
@@ -178,12 +135,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="http://www.fmvilas.com/"><img src="https://avatars.githubusercontent.com/u/242119?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Fran Méndez</b></sub></a><br /><a href="https://github.com/asyncapi/nodejs-ws-template/commits?author=fmvilas" title="Code">💻</a> <a href="#ideas-fmvilas" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://dev.to/derberg"><img src="https://avatars.githubusercontent.com/u/6995927?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lukasz Gornicki</b></sub></a><br /><a href="#infra-derberg" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/asyncapi/nodejs-ws-template/commits?author=derberg" title="Code">💻</a> <a href="https://github.com/asyncapi/nodejs-ws-template/pulls?q=is%3Apr+reviewed-by%3Aderberg" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-derberg" title="Maintenance">🚧</a> <a href="https://github.com/asyncapi/nodejs-ws-template/commits?author=derberg" title="Documentation">📖</a> <a href="#blog-derberg" title="Blogposts">📝</a></td>
-    <td align="center"><a href="https://aayushsahu.com"><img src="https://avatars.githubusercontent.com/u/54525741?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aayush Kumar Sahu</b></sub></a><br /><a href="#security-aayushmau5" title="Security">🛡️</a></td>
-    <td align="center"><a href="https://github.com/KatrinaAS"><img src="https://avatars.githubusercontent.com/u/690546?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Katrina Knight</b></sub></a><br /><a href="#infra-KatrinaAS" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="https://github.com/RageZBla"><img src="https://avatars.githubusercontent.com/u/1196871?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Olivier Lechevalier</b></sub></a><br /><a href="https://github.com/asyncapi/nodejs-ws-template/commits?author=RageZBla" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Krishks369"><img src="https://avatars.githubusercontent.com/u/71367204?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Krishna Kumar S</b></sub></a><br /><a href="https://github.com/asyncapi/nodejs-ws-template/commits?author=Krishks369" title="Tests">⚠️</a></td>
   </tr>
 </table>
 
