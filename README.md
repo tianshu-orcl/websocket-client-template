@@ -46,7 +46,7 @@ This is a very early version of the template and not all specification features 
 Property name | Reason | Fallback | Default
 ---|---|---|---
 `servers.*.url` | Template doesn't support variables in the server url. | - | -
-`bindings` | Template doesn't use [websockets](https://github.com/asyncapi/bindings/tree/master/websockets) bindings.| - | -
+`bindings` | Template doesn't fully use [websockets](https://github.com/asyncapi/bindings/tree/master/websockets) bindings.| - | -
 `operationId` | Operation ID must be set for every operation to generate proper functions as there is no fallback in place | - | -
 
 ## Supported protocols
@@ -75,7 +75,7 @@ ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p serve
 ## Start the client
 ##
 
-# Go to generated output folder
+# Go to generated output folder, excute the client and follow the instructions
 cd output
 node client.js
 ```
@@ -89,19 +89,11 @@ You can configure this template by passing different parameters in the Generator
 |server|The server you want to use in the code.|Yes| - | Name of the server from the list of servers under Servers object | `localhost`|
 
 
-## Custom hooks that you can disable
-
-The functionality of this template is extended with different hooks that you can disable like this in the Generator CLI: `-d HOOK_TYPE1=HOOK_NAME1,HOOK_NAME2 -d HOOK_TYPE2`
-
-Type | Name | Description
----|---|---
-generate:after | createAsyncapiFile | It creates AsyncAPI file with content of the spec file passed to the generator
-
 ## Development
 
 The most straightforward command to use this template is:
 ```bash
-ag https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml @asyncapi/nodejs-ws-template -o output -p server=localhost
+ag https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml @asyncapi/websocket-streaming-template -o output -p server=localhost
 ```
 
 For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
@@ -134,8 +126,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-  </tr>
+    <td align="center"><a href="https://github.com/tianshu-orcl"></td>
 </table>
 
 <!-- markdownlint-restore -->

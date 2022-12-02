@@ -1,5 +1,5 @@
 {
-  "projectName": "template-for-generator-templates",
+  "projectName": "websocket-streaming-template",
   "projectOwner": "asyncapi",
   "repoType": "github",
   "repoHost": "https://github.com",
@@ -11,10 +11,10 @@
   "commitConvention": "none",
   "contributors": [
     {
-      "login": "derberg",
-      "name": "Lukasz Gornicki",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/6995927?v=4",
-      "profile": "https://dev.to/derberg",
+      "login": "tianshu-orcl",
+      "name": "Tianshu Li",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100882324?v=4",
+      "profile": "https://github.com/tianshu-orcl",
       "contributions": [
         "code",
         "doc",
@@ -24,26 +24,17 @@
       ]
     },
     {
-      "login": "bszwarc",
-      "name": "Barbara Szwarc",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/17266942?v=4",
-      "profile": "https://github.com/bszwarc",
+      "login": "ybaba888",
+      "name": "Yoshitaka Baba",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40038220?v=4",
+      "profile": "https://github.com/ybaba888",
       "contributions": [
-        "review"
-      ]
-    },
-    {
-      "login": "magicmatatjahu",
-      "name": "Maciej Urbańczyk",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/20404945?v=4",
-      "profile": "https://github.com/magicmatatjahu",
-      "contributions": [
-        "doc",
-        "code",
-        "ideas"
+        "review",
+	"ideas",
+	"doc"
       ]
     }
   ],
-  "contributorsPerLine": 3,
+  "contributorsPerLine": 2,
   "skipCi": true
 }
