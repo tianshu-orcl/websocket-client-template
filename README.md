@@ -93,26 +93,23 @@ You can configure this template by passing different parameters in the Generator
 
 The most straightforward command to use this template is:
 ```bash
-ag https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml @asyncapi/websocket-streaming-template -o output -p server=localhost
+ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p server=localhost
 ```
 
-For local development, you need different variations of this command. First of all, you need to know about three important CLI flags:
-- `--debug` enables the debug mode in Nunjucks engine what makes filters debugging simpler. 
-- `--watch-template` enables a watcher of changes that you make in the template. It regenerates your template whenever it detects a change.
+For local development, you need different variations of this command. First of all, you need to know about the following important CLI flags:
 - `--install` enforces reinstallation of the template.
-
 
 There are two ways you can work on template development:
 - Use global Generator and template from your local sources:
   ```bash
   # assumption is that you run this command from the root of your template
-  ag https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml ./ -o output
+  ag test/streaming.yaml ./ -o output -p server=localhost
   ```
 - Use Generator from sources and template also from local sources. This approach enables more debugging options with awesome `console.log` in the Generator sources or even the Parser located in `node_modules` of the Generator:
   ```bash
   # assumption is that you run this command from the root of your template
   # assumption is that generator sources are cloned on the same level as the template
-  ../generator/cli.js https://raw.githubusercontent.com/asyncapi/generator/v1.4.0/test/docs/ws.yml ./ -o output
+  ../generator/cli.js test/streaming.yaml ./ -o output -p server=localhost
   ```
 
 
@@ -126,7 +123,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-    <td align="center"><a href="https://github.com/tianshu-orcl"></td>
+  <tr>
+    <td align="center"><a href="https://github.com/tianshu-orcl"><img src="https://avatars.githubusercontent.com/u/100882324?v=4" width="100px;" alt=""/><br /><sub><b>Tianshu Li</b></td>
+    <td align="center"><a href="https://github.com/ybaba888"><img src="https://avatars.githubusercontent.com/u/40038220?v=4" width="100px;" alt=""/><br /><sub><b>Yoshitak Baba</b></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->
