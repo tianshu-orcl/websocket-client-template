@@ -35,9 +35,18 @@ Other files are for the setup of developer environment, like `.editorconfig` or 
 
 ## Technical requirements
 
-- 0.50.0 =< [Generator](https://github.com/asyncapi/generator/) < 2.0.0,
-- Generator specific [requirements](https://github.com/asyncapi/generator/#requirements)
+The Generator is a Node.js application. Therefore, this template also depends on Node.js. The generator's technical requirements are:
 
+- Node.js v12.16+
+- npm v6.13.7+
+
+Install both using [official installer](https://nodejs.org/en/download/).
+
+After that you can install the [AsyncAPI Generator](https://github.com/asyncapi/generator) globally to use its CLI:
+
+```bash
+npm install -g @asyncapi/generator
+```
 
 ## Specification requirements
 
@@ -59,14 +68,15 @@ This template must be used with the AsyncAPI Generator. You can find all availab
 
 ### Data Streaming Client
 
-In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, run the asyncapi generator against a websocket streaming API specification such as test/streaming.yaml:
+In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage case, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, run the asyncapi generator against a websocket streaming API specification such as test/streaming.yaml:
 
 ```bash
 # Install dependecies and the AsyncAPI Generator
 npm install
 npm install -g @asyncapi/generator
 
-# Run generation
+# Run generation,
+# you need to customize the asyncapi yaml document with your actual server settings. 
 ag test/streaming.yaml . -o output -p server=localhost
 or
 ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p server=localhost
@@ -111,9 +121,6 @@ There are two ways you can work on template development:
   # assumption is that generator sources are cloned on the same level as the template
   ../generator/cli.js test/streaming.yaml ./ -o output -p server=localhost
   ```
-
-
-
 
 ## Contributors
 
