@@ -132,7 +132,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/tianshu-orcl"><img src="https://avatars.githubusercontent.com/u/100882324?v=4" width="100px;" alt=""/><br /><sub><b>Tianshu Li</b></td>
-    <td align="center"><a href="https://github.com/ybaba888"><img src="https://avatars.githubusercontent.com/u/40038220?v=4" width="100px;" alt=""/><br /><sub><b>Yoshitak Baba</b></td>
+    <td align="center"><a href="https://github.com/ybaba888"><img src="https://avatars.githubusercontent.com/u/40038220?v=4" width="100px;" alt=""/><br /><sub><b>Yoshitaka Baba</b></td>
   </tr>
 </table>
 
