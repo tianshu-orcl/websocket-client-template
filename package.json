@@ -1,5 +1,5 @@
 {
-  "name": "websocket-streaming-template",
+  "name": "websocket-client-template",
   "version": "0.0.1",
   "description": "Template for generating client code for a websocket streaming service",
   "main": "jsClient.js",
