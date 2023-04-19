@@ -38,7 +38,7 @@ function getQueryParamBlock(queryMap) {
     size                = len(queryParamsDefault)
 
     for key in queryParamsDefault.keys():
-      prompt = "Enter value for query parameter \"+key+\"(default=\"+queryParamsDefault[key]+\"):"
+      prompt = "Enter value for query parameter "+key+"(default="+queryParamsDefault[key]+"):"
       paramValue = input(prompt) or queryParamsDefault[key];
 
       if not queryParamSignAdded:
@@ -105,17 +105,13 @@ export default function({ asyncapi, params }) {
   const urlServer         = asyncapi.server(params.server).url();
   const channels          = asyncapi.channels();
   const channelIterator   = Object.entries(channels);
-  const queryParamSign    = "?";
-  const queryParamDelimit = "&";
   let userFunction        = "processData";
   let urlPath             = "";
-  let urlQueryString      = "";
-  let msgType             = "";
   let isSecure            = false;
   let isBasicAuth         = false;
   let queryMap            = new Map();
     
-  if (urlProtocol == "wss") {
+  if (urlProtocol === "wss") {
     isSecure = true;
   }
     
@@ -133,14 +129,11 @@ export default function({ asyncapi, params }) {
     }
 
     urlPath = channelName;
-    const channelParameterEntries = Object.entries(channel.parameters());
-    msgType = channel.subscribe().message().payload().type()
     userFunction = channel.subscribe().id();
 
     if (channel.hasBindings("ws")) {
       let ws_binding = channel.binding("ws");
       const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
-      let bindingPropSize = bindingPropIterator.length;	
 
       for (const [propKey, propValue] of bindingPropIterator) {
         let sValue = propValue["default"];

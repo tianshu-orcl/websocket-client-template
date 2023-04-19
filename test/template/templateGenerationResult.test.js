@@ -20,7 +20,7 @@ describe('templateGenerationResult()', () => {
   });
 
   it('generated correct streaming client code', async () => {
-    const clientJSCode = await readFile(path.join(outputDir, 'client.js'), 'utf8');
-    const clientPYCode = await readFile(path.join(outputDir, 'client.py'), 'utf8');
+    await readFile(path.join(outputDir, 'client.js'), 'utf8');
+    await readFile(path.join(outputDir, 'client.py'), 'utf8');
   });
 });

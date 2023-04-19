@@ -164,7 +164,6 @@ export default function({ asyncapi, params }) {
 
     if (channel.hasBindings("ws")) {
       let ws_binding = channel.binding("ws");
-      let queryParamSignAdded = false;	
       const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
 
       for (const [propKey, propValue] of bindingPropIterator) {
