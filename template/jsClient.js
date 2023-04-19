@@ -1,7 +1,7 @@
 import { File } from '@asyncapi/generator-react-sdk';
 
 function getDataProcessingBlock (msgType) {
-  if (msgType == "array") {
+  if (msgType === "array") {
     return ` 
         for (var i = 0; i < records.length; i++) {
 	    console.log(records[i]);
@@ -66,7 +66,7 @@ function getQueryParamBlock(queryMap) {
     let size                = queryParams.length;
 
     for (const [key, value] of queryParams) {
-      let paramValue = reader.question("Enter the value for query parameter \"+key+\"(default=\"+value+\"):") || value;
+      let paramValue = reader.question("Enter the value for query parameter "+key+"(default="+value+"):") || value;
 
       if (!queryParamSignAdded) {
         serviceURL += queryParamSign;
@@ -134,17 +134,14 @@ export default function({ asyncapi, params }) {
   const urlServer         = asyncapi.server(params.server).url();
   const channels          = asyncapi.channels();
   const channelIterator   = Object.entries(channels);
-  const queryParamSign    = "?";
-  const queryParamDelimit = "&";
   let userFunction        = "processData";
   let urlPath             = "";
-  let urlQueryString      = "";
   let msgType             = "";
   let isSecure            = false;
   let isBasicAuth         = false;
   let queryMap            = new Map();
     
-  if (urlProtocol == "wss") {
+  if (urlProtocol === "wss") {
     isSecure = true;
   }
     
@@ -162,7 +159,6 @@ export default function({ asyncapi, params }) {
     }
 
     urlPath = channelName;
-    const channelParameterEntries = Object.entries(channel.parameters());
     msgType = channel.subscribe().message().payload().type()
     userFunction = channel.subscribe().id();
 
