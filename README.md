@@ -1,7 +1,7 @@
-<h1 align="center">WebSocket Streaming template</h1>
+<h1 align="center">WebSocket Client template</h1>
 
 <p align="center">
-  <em>This is a websocket streaming template for the AsyncAPI generator</em>
+  <em>This is a websocket client template for the AsyncAPI generator</em>
 </p>
 
 [![AsyncAPI logo](./assets/github-repobanner-generic.png)](https://www.asyncapi.com)  
@@ -68,7 +68,7 @@ This template must be used with the AsyncAPI Generator. You can find all availab
 
 ### Data Streaming Client
 
-In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage case, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, run the asyncapi generator against a websocket streaming API specification such as test/streaming.yaml:
+In case of one-way data streaming use case, A client program establishes the websocket connection with the specified service and starts to receive data in a streaming fashion. In this usage case, a single channel is assumed in the service configuration and only subscribe operation is supported for the channel. To generate the data streaming client, run the asyncapi generator against a websocket client API specification such as test/streaming.yaml:
 
 ```bash
 # Install dependecies and the AsyncAPI Generator
@@ -79,7 +79,7 @@ npm install -g @asyncapi/generator
 # you need to customize the asyncapi yaml document with your actual server settings. 
 ag test/streaming.yaml . -o output -p server=localhost
 or
-ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p server=localhost
+ag test/streaming.yaml @asyncapi/websocket-client-template -o output -p server=localhost
 
 ##
 ## Start the client
@@ -103,7 +103,7 @@ You can configure this template by passing different parameters in the Generator
 
 The most straightforward command to use this template is:
 ```bash
-ag test/streaming.yaml @asyncapi/websocket-streaming-template -o output -p server=localhost
+ag test/streaming.yaml @asyncapi/websocket-client-template -o output -p server=localhost
 ```
 
 For local development, you need different variations of this command. First of all, you need to know about the following important CLI flags:
