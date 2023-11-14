@@ -7,8 +7,18 @@ function getUserInputBlock (isSecure, isBasicAuth) {
     }
     return `    ##
     ## Note: The following commands can be used to extract pem file from the wallet.
-    ##  openssl pkcs12 -in <path_to_wallet>/ewallet.p12  -out <>file_name>.pem -nodes
-    userPemFile = input("Enter location of the certificate file(.pem): ")
+    ##  openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -clcerts -nokeys -out <file_name>.crt
+    ##  openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -nocerts -nodes  -out <file_name>.rsa
+    ##  openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -cacerts -nokeys -chain -out <file_name>.crt
+    userCert = os.environ.get("ASYNCAPI_WS_CLIENT_CERT")
+    if not userCert:
+        userCert = input("Enter location of the client certificate: ")
+    userKey = os.environ.get("ASYNCAPI_WS_CLIENT_KEY")
+    if not userKey:
+        userKey = input("Enter location of the private key: ")
+    caCert = os.environ.get("ASYNCAPI_WS_CA_CERT")
+    if not caCert:
+        caCert = input("Enter location of the CA certificate: ")
     `;
   }
   else {
@@ -16,8 +26,12 @@ function getUserInputBlock (isSecure, isBasicAuth) {
       return ``;
     }
     else {
-      return `    username = input("Enter the username for accessing the service: ")
-    password = getpass.getpass(prompt="Enter the password for accessing the service: ")
+      return `    username = os.environ.get("ASYNCAPI_WS_CLIENT_USERNAME")
+    if not username:
+        username = input("Enter the username for accessing the service: ")
+    password = os.environ.get("ASYNCAPI_WS_CLIENT_PASSWORD")
+    if not password:
+        password = getpass.getpass(prompt="Enter the password for accessing the service: ")
     if not username or not password :
       raise ValueError("username and password can not be empty")
       `;
@@ -80,9 +94,8 @@ function getWebSocketConnectionBlock (isSecure) {
     return ` 
     ## establishing secure websocket connection to the service
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-    localPem = pathlib.Path(__file__).with_name(userPemFile)
-    ssl_context.load_verify_locations(localPem)
-    ssl_context.load_cert_chain(localPem)
+    ssl_context.load_verify_locations(caCert)
+    ssl_context.load_cert_chain(userCert, userKey)
 
     async with websockets.connect(serviceURL, ssl=ssl_context) as websocket:`;
   }
@@ -169,6 +182,7 @@ import json
 import ssl
 import pathlib
 import getpass
+import os
 
 ###############################################################################
 #
