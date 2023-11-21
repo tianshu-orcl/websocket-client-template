@@ -134,10 +134,28 @@ function getWebSocketConnectionBlock (isSecure) {
   }
 }
 
+function setQueryParam (channel, queryMap) {
+  if (channel.hasBindings("ws")) {
+    let ws_binding = channel.binding("ws");
+    const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
+
+    for (const [propKey, propValue] of bindingPropIterator) {
+      let sValue = propValue["default"];
+      if (sValue) {
+        queryMap.set(propKey, sValue);      
+      }
+      else {
+        queryMap.set(propKey, '');      
+      }
+    }
+  }
+}
+
 export default function({ asyncapi, params }) {
   if (!asyncapi.hasComponents()) {
     return null;
   }
+
   if (!asyncapi.hasChannels()) {
     return null;
   }
@@ -171,23 +189,10 @@ export default function({ asyncapi, params }) {
     }
 
     urlPath = channelName;
-    msgType = channel.subscribe().message().payload().type()
+    msgType = channel.subscribe().message().payload().type();
     userFunction = channel.subscribe().id();
 
-    if (channel.hasBindings("ws")) {
-      let ws_binding = channel.binding("ws");
-      const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
-
-      for (const [propKey, propValue] of bindingPropIterator) {
-        let sValue = propValue["default"];
-        if (sValue) {
-          queryMap.set(propKey, sValue);      
-        }
-        else {
-          queryMap.set(propKey, '');      
-        }
-      }
-    }
+    setQueryParam(channel, queryMap);
   }
 
   let dataProcessBlock = getDataProcessingBlock(msgType);
@@ -274,8 +279,8 @@ const init = async () =>{
 }
 
 init()
-
-      `}
+`
+      }
     </File>
   );
 }
