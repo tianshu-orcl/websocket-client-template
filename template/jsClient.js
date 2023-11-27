@@ -24,10 +24,18 @@ function getUserInputBlock (isSecure, isBasicAuth) {
     }
     return ` 
     //Note: The following commands can be used to extract key/cert from your wallet.
-    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12  -nokeys  -out <file_name>.crt -nodes  
-    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12  -nocerts -out <file_name>.rsa -nodes
-    let userCert = reader.question("Enter location of the certificate(.crt): ");
-    let userKey  = reader.question("Enter location of the key(.rsa): ");
+    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -clcerts -nokeys -out <file_name>.crt  
+    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -nocerts -nodes  -out <file_name>.rsa
+    //   openssl pkcs12 -in <path_to_wallet>/ewallet.p12 -cacerts -nokeys -chain -out <file_name>.crt
+    let userCert = "ASYNCAPI_WS_CLIENT_CERT" in process.env ? 
+    		process.env.ASYNCAPI_WS_CLIENT_CERT : 
+		reader.question("Enter location of the client certificate: ");
+    let userKey = "ASYNCAPI_WS_CLIENT_KEY" in process.env ? 
+    		process.env.ASYNCAPI_WS_CLIENT_KEY : 
+		reader.question("Enter location of the private key: ");
+    let caCert = "ASYNCAPI_WS_CA_CERT" in process.env ? 
+    		process.env.ASYNCAPI_WS_CA_CERT : 
+		reader.question("Enter location of the CA certificate: ");
     `;
   }
   else {
@@ -37,8 +45,12 @@ function getUserInputBlock (isSecure, isBasicAuth) {
     }
     else {
       return ` 
-    let username = reader.question("Enter the username for accessing the service: ");
-    let password = reader.question("Enter the password for accessing the service: ",{ hideEchoBack: true });
+    let username = "ASYNCAPI_WS_CLIENT_USERNAME" in process.env ?
+    		process.env.ASYNCAPI_WS_CLIENT_USERNAME :
+		reader.question("Enter the username for accessing the service: ");
+    let password = "ASYNCAPI_WS_CLIENT_PASSWORD" in process.env ?
+    		process.env.ASYNCAPI_WS_CLIENT_PASSWORD :
+		reader.question("Enter the password for accessing the service: ",{ hideEchoBack: true });
     if (!username || !password) {
       throw new Error("username and password can not be empty");
     }
@@ -109,7 +121,7 @@ function getWebSocketConnectionBlock (isSecure) {
     const options = {
       key: fs.readFileSync(userKey),
       cert: fs.readFileSync(userCert),
-      ca: fs.readFileSync(userCert)
+      ca: fs.readFileSync(caCert)
      };
     const wsClient = new WebSocket(serviceURL,options);
     `;
@@ -122,10 +134,28 @@ function getWebSocketConnectionBlock (isSecure) {
   }
 }
 
+function setQueryParam (channel, queryMap) {
+  if (channel.hasBindings("ws")) {
+    let ws_binding = channel.binding("ws");
+    const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
+
+    for (const [propKey, propValue] of bindingPropIterator) {
+      let sValue = propValue["default"];
+      if (sValue) {
+        queryMap.set(propKey, sValue);      
+      }
+      else {
+        queryMap.set(propKey, '');      
+      }
+    }
+  }
+}
+
 export default function({ asyncapi, params }) {
   if (!asyncapi.hasComponents()) {
     return null;
   }
+
   if (!asyncapi.hasChannels()) {
     return null;
   }
@@ -159,23 +189,10 @@ export default function({ asyncapi, params }) {
     }
 
     urlPath = channelName;
-    msgType = channel.subscribe().message().payload().type()
+    msgType = channel.subscribe().message().payload().type();
     userFunction = channel.subscribe().id();
 
-    if (channel.hasBindings("ws")) {
-      let ws_binding = channel.binding("ws");
-      const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
-
-      for (const [propKey, propValue] of bindingPropIterator) {
-        let sValue = propValue["default"];
-        if (sValue) {
-          queryMap.set(propKey, sValue);      
-        }
-        else {
-          queryMap.set(propKey, '');      
-        }
-      }
-    }
+    setQueryParam(channel, queryMap);
   }
 
   let dataProcessBlock = getDataProcessingBlock(msgType);
@@ -262,8 +279,8 @@ const init = async () =>{
 }
 
 init()
-
-      `}
+`
+      }
     </File>
   );
 }

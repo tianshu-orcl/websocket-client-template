@@ -14,13 +14,21 @@ describe('templateGenerationResult()', () => {
     server: 'localhost'
   };
 
+  const expectedFiles = [
+    'client.js',
+    'client.py'
+  ];
+
   beforeAll(async() => {
     const generator = new Generator('./', outputDir, { forceWrite: true, templateParams: params });
     await generator.generateFromFile(path.resolve('test','streaming.yaml')); 
   });
 
   it('generated correct streaming client code', async () => {
-    await readFile(path.join(outputDir, 'client.js'), 'utf8');
-    await readFile(path.join(outputDir, 'client.py'), 'utf8');
+    for (const fileName of expectedFiles) { 
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename -- Safe as no value holds user input */
+      const file = await readFile(path.join(outputDir, fileName), 'utf8');
+      expect(file).toMatchSnapshot();
+    }
   });
 });
