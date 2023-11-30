@@ -27,8 +27,7 @@
     "@asyncapi/generator-filters": "^2.1.0",
     "@asyncapi/generator-hooks": "^0.1.0",
     "@asyncapi/generator-react-sdk": "^1.0.0",
-    "puppeteer": "^19.8.5",
-    "readline-sync": "^1.4.10"
+    "puppeteer": "^19.8.5"
   },
   "release": {
     "branches": [
