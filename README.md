@@ -81,12 +81,15 @@ ag test/streaming.yaml . -o output -p server=localhost
 or
 ag test/streaming.yaml @asyncapi/websocket-client-template -o output -p server=localhost
 
+# Go to generated output folder, and install needed packages for client
+cd output
+npm install
+
 ##
 ## Start the client
 ##
 
-# Go to generated output folder, excute the client and follow the instructions
-cd output
+# Excute the client and follow the instructions
 node client.js
 ```
 
