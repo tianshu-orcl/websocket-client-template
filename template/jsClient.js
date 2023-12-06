@@ -3,8 +3,9 @@ import { File } from '@asyncapi/generator-react-sdk';
 function getDataProcessingBlock (msgType) {
   if (msgType === "array") {
     return ` 
-        for (var i = 0; i < records.length; i++) {
-	    console.log(records[i]);
+        const recordArray = eval(records);
+        for (var i = 0; i < recordArray.length; i++) {
+	    console.log(recordArray[i]);
             //data processing, implement user logic here. 
         }
     `;
@@ -232,7 +233,7 @@ const fs = require('fs');
 const ${userFunction} = (wsClient) => {
     wsClient.on('message', function message(data) {
         console.log('received some data:')
-        const records = eval(data.toString())
+        const records = data.toString()
 `+
  dataProcessBlock
  +
