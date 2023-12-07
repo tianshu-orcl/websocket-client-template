@@ -89,6 +89,10 @@ npm install
 ## Start the client
 ##
 
+# Optional: You can set environment variables for username/password or the location of certificate/key.
+# For WS, use ASYNCAPI_WS_CLIENT_USERNAME and ASYNCAPI_WS_CLIENT_PASSWORD to specify the username and password accordingly. 
+# For WSS, use ASYNCAPI_WS_CLIENT_CERT, ASYNCAPI_WS_CLIENT_KEY, and ASYNCAPI_WS_CA_CERT to specify the location of client certificate, client private key, or CA certificate.
+
 # Excute the client and follow the instructions
 node client.js
 ```
