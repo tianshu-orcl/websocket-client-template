@@ -1,4 +1,4 @@
-asyncapi: '2.2.0'
+asyncapi: '3.0.0'
 info:
   title: data streaming API
   version: '1.0.0'
@@ -9,16 +9,20 @@ info:
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
 servers:
   localhost:
-    url: admin:admin@localhost:9002
+    host: 'admin:admin@localhost:9002'
     protocol: ws
 
 defaultContentType: application/json
 
 channels:
-  /services/v2/stream/stream1:
+  stream1:
+    address: '/services/v2/stream/stream1'
+    messages:
+      userMessage:
+        $ref : '#/components/messages/userRecords'
     bindings:
       ws:
-        bindingVersion: 1.0.0
+        bindingVersion: 0.1.0
         query:
           type: object
           description: query parameter like begin=earliest
@@ -27,11 +31,12 @@ channels:
               type: string
               default: earliest
               description: begin position to start streaming data
-    subscribe:
-      summary: data records
-      operationId: onRecords
-      message:
-        $ref : '#/components/messages/userRecords'
+operations:
+  onRecords:
+    action: receive
+    channel:
+      $ref : '#/channels/stream1'
+    summary: data records
 
 components:
   messages:

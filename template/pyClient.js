@@ -65,11 +65,11 @@ function getQueryParamBlock(queryMap) {
   `;
 }
 
-function getServiceUrlBlock (isSecure,isBasicAuth,urlProtocol,urlServer,urlPath) {
+function getServiceUrlBlock (isSecure,isBasicAuth,urlProtocol,urlHost,urlPath) {
   if (isSecure) {
     return ` 
     # construct service URL
-    serviceURL = '`+urlProtocol+`://`+urlServer+urlPath+`'
+    serviceURL = '`+urlProtocol+`://`+urlHost+urlPath+`'
     `
     ;
   }
@@ -77,13 +77,13 @@ function getServiceUrlBlock (isSecure,isBasicAuth,urlProtocol,urlServer,urlPath)
     if (isBasicAuth) {	  
       return ` 
     # construct service URL
-    serviceURL = '`+urlProtocol+`://`+urlServer+urlPath+`'
+    serviceURL = '`+urlProtocol+`://`+urlHost+urlPath+`'
       `;
     }
     else {
       return `
     # construct service URL
-    serviceURL = '`+urlProtocol+`://'+username+':'+password+'@`+urlServer+urlPath+`'
+    serviceURL = '`+urlProtocol+`://'+username+':'+password+'@`+urlHost+urlPath+`'
     `;
     }
   }
@@ -107,9 +107,9 @@ function getWebSocketConnectionBlock (isSecure) {
 }
 
 function setQueryParam (channel, queryMap) {
-  if (channel.hasBindings("ws")) {
-    let ws_binding = channel.binding("ws");
-    const bindingPropIterator = Object.entries(ws_binding["query"]["properties"]);
+  if (channel.bindings().has("ws")) {
+    let ws_binding = channel.bindings().get("ws");    
+    const bindingPropIterator = Object.entries(ws_binding.json()["query"]["properties"]);
 
     for (const [propKey, propValue] of bindingPropIterator) {
       let sValue = propValue["default"];
@@ -124,17 +124,17 @@ function setQueryParam (channel, queryMap) {
 }
 
 export default function({ asyncapi, params }) {
-  if (!asyncapi.hasComponents()) {
+  if (asyncapi.components().isEmpty()) {
     return null;
   }
-  if (!asyncapi.hasChannels()) {
+  if (asyncapi.channels().isEmpty()) {
     return null;
   }
 
-  const urlProtocol       = asyncapi.server(params.server).protocol();
-  const urlServer         = asyncapi.server(params.server).url();
+  const server            = asyncapi.servers().get(params.server);
+  const urlProtocol       = server.protocol();
+  const urlHost           = server.host();
   const channels          = asyncapi.channels();
-  const channelIterator   = Object.entries(channels);
   let userFunction        = "processData";
   let urlPath             = "";
   let isSecure            = false;
@@ -145,27 +145,35 @@ export default function({ asyncapi, params }) {
     isSecure = true;
   }
     
-  if (urlServer.includes("@")) {
+  if (urlHost.includes("@")) {
     isBasicAuth = true;
   }
     
-  if (channelIterator.length !== 1) {
+  if (channels.length !== 1) {
     throw new Error('only one channel allowed per streaming endpoint');
   }
     
-  for (const [channelName, channel] of channelIterator) {
-    if (channel.hasPublish()) {
+  channels.forEach(channel=> {
+    if (channel.operations().filterBySend().length > 0) {
       throw new Error('publish operation not supported in streaming client');
     }
 
-    urlPath = channelName;
-    userFunction = channel.subscribe().id();
+    urlPath = channel.address();
+
+    const operations = channel.operations();
+    for (let i = 0; i < operations.length; i++) {
+      if (i > 0) {
+        console.log('only support one subscribe operation');
+        break;
+      }
+      userFunction = operations[i].id();
+    }
 
     setQueryParam(channel, queryMap);	  
-  }
+  });
     
   let userInputBlock = getUserInputBlock(isSecure,isBasicAuth);
-  let serviceUrlBlock = getServiceUrlBlock(isSecure,isBasicAuth,urlProtocol,urlServer,urlPath);
+  let serviceUrlBlock = getServiceUrlBlock(isSecure,isBasicAuth,urlProtocol,urlHost,urlPath);
   let queryParamBlock = getQueryParamBlock(queryMap); 
   let websocketConnectionBlock = getWebSocketConnectionBlock(isSecure);
      
@@ -176,7 +184,7 @@ export default function({ asyncapi, params }) {
 #
 # ${asyncapi.info().title()} - ${asyncapi.info().version()}
 # ${urlProtocol} protocol: 
-# ${urlServer} 
+# ${urlHost} 
 # ${urlPath}
 ###############################################################################
 
