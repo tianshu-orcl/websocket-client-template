@@ -26,7 +26,7 @@
   "dependencies": {
     "@asyncapi/generator-filters": "^2.1.0",
     "@asyncapi/generator-hooks": "^0.1.0",
-    "@asyncapi/generator-react-sdk": "^1.0.0",
+    "@asyncapi/generator-react-sdk": "^1.0.8",
     "puppeteer": "^19.8.5"
   },
   "release": {
@@ -52,6 +52,7 @@
   },
   "generator": {
     "renderer": "react",
+    "apiVersion": "v3",
     "parameters": {
       "asyncapiFileDir": {
         "description": "Custom location of the AsyncAPI file that you provided as an input in generation. By default it is located in the root of the output directory"
@@ -71,8 +72,8 @@
     }
   },
   "devDependencies": {
-    "@asyncapi/generator": "^1.14.0",
-    "@asyncapi/parser": "^2.1.1",
+    "@asyncapi/generator": "^1.17.2",
+    "@asyncapi/parser": "^3.0.4",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-react": "^7.14.5",
     "@semantic-release/commit-analyzer": "^8.0.1",
